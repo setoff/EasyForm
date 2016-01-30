@@ -34,6 +34,13 @@
     return _options;
 }
 
+- (NSDictionary *)selectedOption {
+    if (!_selectedOption) {
+        _selectedOption = [self.options firstObject];
+    }
+    return _selectedOption;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -77,7 +84,10 @@
     defCell.onTap = onTap;
 
     EFSection *stdCells = [[EFSection alloc] initWithTag:@"stdSetion"
-                                                elements:@[defCell, subtitle, value1, value2]];
+                                                elements:@[defCell,
+                                                           subtitle,
+                                                           value1,
+                                                           value2]];
     stdCells.title = @"UITableViewCells showcase";
 
 
@@ -91,17 +101,8 @@
         [self.tableView displayForm:self.form2];
     };
 
-    EFElement *toggleShowcase = [[EFElement alloc] initWithTag:@"toggleShowcase"];
-    toggleShowcase.setupCell = ^(UITableViewCell *cell) {
-        cell.textLabel.text = [NSString stringWithFormat:@"Tap to %@ %@",
-                               stdCells.isHidden ? @"show" : @"hide", @"top section"];
-    };
-    toggleShowcase.onTap = ^(UITableViewCell *cell, EFElement *item) {
-        stdCells.hidden = !stdCells.isHidden;
-    };
-
     EFSection *changeForm = [[EFSection alloc] initWithTag:@"changeSection"
-                                                  elements:@[change, toggleShowcase]];
+                                                  elements:@[change]];
     changeForm.title = @"Change form on fly";
     changeForm.setupTitle = ^{
         return stdCells.isHidden ? @"This is the same form with hidden section" : (NSString *)nil;
@@ -143,19 +144,40 @@
                                            forState:UIControlStateNormal];
         [((EFWideButtonCell *)cell).button setTitle:@"Will display alert"
                                            forState:UIControlStateHighlighted];
+        ((EFWideButtonCell *)cell).button.backgroundColor = [UIColor colorWithRed:158/255.0
+                                                                            green:199/255.0
+                                                                             blue:117/255.0
+                                                                            alpha:1.0];
         ((EFWideButtonCell *)cell).onTap = ^{
             [self alertAction:@"Demo button has been tapped"];
         };
     };
 
-    EFSection *predefined = [[EFSection alloc] initWithTag:@"predefined"
-                                                  elements:@[input, switchElement, buttonCell]];
-    predefined.title = @"EF provides these form cells:";
-
     EFElement *optionSelect = [[EFElement alloc] initWithTag:@"optionCells"];
+    optionSelect.cellStyle = UITableViewCellStyleValue1;
     optionSelect.setupCell = ^(UITableViewCell *cell) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.text = @"Options view controller demo";
         cell.detailTextLabel.text = self.selectedOption[@"title"];
     };
+    optionSelect.onTap = ^(UITableViewCell *cell, EFElement *item) {
+        EFOptionsListViewController *optionsViewController = [EFOptionsListViewController new];
+        optionsViewController.options = self.options;
+        optionsViewController.selectedObjects = @[self.selectedOption];
+        optionsViewController.onSelect = ^(NSInteger index, NSDictionary *option) {
+            self.selectedOption = option;
+            [self.tableView reloadData];
+        };
+
+        [self.navigationController pushViewController:optionsViewController animated:YES];
+    };
+
+    EFSection *predefined = [[EFSection alloc] initWithTag:@"predefined"
+                                                  elements:@[input,
+                                                             switchElement,
+                                                             buttonCell,
+                                                             optionSelect]];
+    predefined.title = @"EF provides these form cells:";
 
 
     EFElement *info = [[EFElement alloc] initWithTag:@"infoCell"];
@@ -163,12 +185,16 @@
     info.cellHeight = 60.0;
     info.setupCell = ^(UITableViewCell *cell) {
         cell.textLabel.numberOfLines = 2;
+        cell.textLabel.textColor = [UIColor lightGrayColor];
         cell.textLabel.text = @"You may switch back to form 2 by tapping cell below.";
     };
 
     EFElement *back = [[EFElement alloc] initWithTag:@"backCell"];
     back.setupCell = ^(UITableViewCell *cell) {
         cell.textLabel.text = @"Back to form 1";
+        cell.textLabel.textColor = [UIColor colorWithRed:73/255.0
+                                                   green:172/255.0
+                                                    blue:198/255.0 alpha:1.0];
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
     };
     back.onTap = ^(UITableViewCell *cell, EFElement *item) {
