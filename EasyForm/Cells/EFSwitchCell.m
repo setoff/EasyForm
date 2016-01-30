@@ -37,15 +37,17 @@
                                              metrics:nil
                                                views:views]];
     [self.contentView addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_switchToggle]-|"
-                                             options:0
-                                             metrics:nil
-                                               views:views]];
-    [self.contentView addConstraints:
      [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_titleLabel]-|"
                                              options:0
                                              metrics:nil
                                                views:views]];
+    [self.contentView addConstraint:
+     [NSLayoutConstraint constraintWithItem:_switchToggle
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.contentView
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1.0 constant:0.0]];
     [self.switchToggle setContentHuggingPriority:UILayoutPriorityDefaultHigh
                                          forAxis:UILayoutConstraintAxisHorizontal];
 }
