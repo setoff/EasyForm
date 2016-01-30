@@ -9,32 +9,35 @@
 Pod::Spec.new do |s|
   s.name             = "EasyForm"
   s.version          = "0.1.0"
-  s.summary          = "A short description of EasyForm."
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!  
+  s.summary          = "UITableView-based declarative form constructor."
   s.description      = <<-DESC
+                        `UITableView`-based wrapper for easily creating forms in declarative style.
                        DESC
 
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/EasyForm"
+  s.homepage         = "https://github.com/setoff/EasyForm"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "Ilya Sedov" => "i.setoff@gmail.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/EasyForm.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
+  s.source           = { :git => "https://github.com/setoff/EasyForm.git", :tag => s.version.to_s }
+  s.social_media_url = 'https://twitter.com/cdog_ya'
   s.platform     = :ios, '7.0'
   s.requires_arc = true
 
-  s.source_files = 'Pod/Classes/**/*'
-  s.resource_bundles = {
-    'EasyForm' => ['Pod/Assets/*.png']
-  }
+  s.subspec 'Core' do |core|
+    core.source_files = 'EasyForm/Core/**/*'
+    core.frameworks = 'UIKit'
+  end
 
+  s.subspec 'Cells' do |cells|
+    cells.source_files = 'EasyForm/Cells/**/*'
+    cells.frameworks = 'UIKit'
+  end
+
+  s.subspec 'Tools' do |tools|
+    tools.source_files = 'EasyForm/Tools/**/*'
+    tools.frameworks = 'UIKit'
+  end
+  
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end

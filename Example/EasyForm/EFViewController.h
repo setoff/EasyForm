@@ -8,6 +8,6 @@
 
 @import UIKit;
 
-@interface EFViewController : UIViewController
+@interface EFViewController : UITableViewController
 
 @end
