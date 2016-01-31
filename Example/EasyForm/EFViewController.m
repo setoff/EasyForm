@@ -79,7 +79,7 @@
     };
 
     EFSection *changeForm = [[EFSection alloc] initWithTag:@"changeSection"
-                                                  elements:@[change, hideButton]];
+                                                  elements:@[hideButton, change]];
     changeForm.title = @"Change form on fly";
     changeForm.setupTitle = ^{
         return stdCells.isHidden ? @"This is the same form with hidden section" : (NSString *)nil;

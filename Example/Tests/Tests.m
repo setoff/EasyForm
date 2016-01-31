@@ -184,6 +184,26 @@ describe(@"Sections", ^{
         EFSection *found = [testForm sectionWithTag:kTagOne];
         expect(found).to.equal(sectionOne);
     });
+
+    it(@"sets section header title", ^{
+        NSString *expectedTitle = @"Section one title";
+        sectionOne.title = expectedTitle;
+        NSString *sectionsTitle = [testForm tableView:tableView
+                              titleForHeaderInSection:0];
+        expect(sectionsTitle).to.equal(expectedTitle);
+    });
+
+    it(@"sets section header by block", ^{
+        NSString *expectedTitle = @"dynamic title";
+        __block BOOL calledBlock = NO;
+        sectionOne.setupTitle = ^{
+            calledBlock = YES;
+            return expectedTitle;
+        };
+        NSString *buildedTitle = [testForm tableView:tableView titleForHeaderInSection:0];
+        expect(buildedTitle).to.equal(expectedTitle);
+        expect(calledBlock).to.beTruthy();
+    });
 });
 
 SpecEnd
