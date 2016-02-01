@@ -24,20 +24,20 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.subspec 'Core' do |core|
-    core.source_files = 'EasyForm/Core/**/*'
+    core.source_files = 'EasyForm/Core/**/*.{h,m,c}'
     core.frameworks = 'UIKit'
   end
 
   s.subspec 'Cells' do |cells|
-    cells.source_files = 'EasyForm/Cells/**/*'
+    cells.source_files = 'EasyForm/Cells/**/*.{h,m,c}'
     cells.frameworks = 'UIKit'
   end
 
   s.subspec 'Tools' do |tools|
-    tools.source_files = 'EasyForm/Tools/**/*'
+    tools.source_files = 'EasyForm/Tools/**/*.{h,m,c}'
     tools.frameworks = 'UIKit'
   end
-  
+
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.dependency 'AFNetworking', '~> 2.3'
 end
