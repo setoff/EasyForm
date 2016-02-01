@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/EasyForm.svg?style=flat)](http://cocoapods.org/pods/EasyForm)
 [![Platform](https://img.shields.io/cocoapods/p/EasyForm.svg?style=flat)](http://cocoapods.org/pods/EasyForm)
 
-This libs is not pretended as non-UITableview-solution. It allows to use all `UITableView/UITableViewCell` customization abilities. If we haven't found any particular form UI element(see Cells subspec) you can easily create it by yourself with familiar tools like InterfaceBuilder (using cell xibs) or by subclassing `UITableViewCell`.
+This is `UITableViewDataSource/UITableViewDelegate` form constructor solution. It allows to use `UITableView/UITableViewCell` customization abilities. We provide several basic  [Cells](https://github.com/setoff/EasyForm/tree/master/EasyForm/Cells). If you haven't found any particular form UI element you can easily create it by yourself with familiar tools like InterfaceBuilder (using cell xibs) or by subclassing `UITableViewCell`. And pull-requests are welcome!
 
 Form configuration and logic can be implemented in declarative way. Can be placed in separate module and reused in different view controllers.
 
@@ -55,10 +55,6 @@ it, simply add the following line to your `Podfile`:
 ```ruby
 pod "EasyForm"
 ```
-
-## Author
-
-Ilya Sedov, i.setoff@gmail.com
 
 ## License
 
