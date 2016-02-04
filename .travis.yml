@@ -7,7 +7,7 @@ language: objective-c
 # podfile: Example/Podfile
 before_install:
 - rvm use system
-- gem install cocoapods # Since Travis is not always on latest version
+- sudo gem install cocoapods # Since Travis is not always on latest version
 - pod install --project-directory=Example
 script:
 - set -o pipefail && xcodebuild test -workspace Example/EasyForm.xcworkspace -scheme EasyForm-Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
