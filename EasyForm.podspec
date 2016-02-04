@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "EasyForm"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "UITableView-based declarative form constructor."
   s.description      = <<-DESC
                         `UITableView`-based wrapper for easily creating forms in declarative style.
@@ -38,6 +38,4 @@ Pod::Spec.new do |s|
     tools.frameworks = 'UIKit'
   end
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end

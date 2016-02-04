@@ -7,7 +7,9 @@
 //
 
 #import "EFForm.h"
-
+#import "UITableViewCellValue1.h"
+#import "UITableViewCellValue2.h"
+#import "UITableViewCellSubtitle.h"
 
 @interface EFForm ()
 
@@ -27,6 +29,15 @@
         self.tableView.delegate = self;
     }
     return self;
+}
+
+- (void)setTableView:(UITableView *)tableView {
+    _tableView = tableView;
+    [self enumerateSections:^(EFSection *section) {
+        for (EFElement *item in section.elements) {
+            [self ef_unregCellClassForElement:item];
+        }
+    }];
 }
 
 - (EFSection *)sectionWithTag:(NSString *)tag {
@@ -103,7 +114,9 @@
     EFElement *element = self.actualSections[indexPath.section][indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:element.tag];
     if (!cell) {
-        cell = [self buildCellForElement:element];
+        [self buildCellForElement:element];
+        cell = [tableView dequeueReusableCellWithIdentifier:element.tag];
+        cell.selectionStyle = element.cellSelectionStyle;
     }
 
     return cell;
@@ -117,7 +130,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     EFElement *element = self.actualSections[indexPath.section][indexPath.row];
     if (element.onTap) {
-        element.onTap([tableView cellForRowAtIndexPath:indexPath], element);
+        element.onTap([tableView dequeueReusableCellWithIdentifier:element.tag], element);
     }
 }
 
@@ -137,20 +150,48 @@
 
 #pragma mark - Build cells
 
-- (UITableViewCell *)buildCellForElement:(EFElement *)element {
-    UITableViewCell *cell;
+- (void)buildCellForElement:(EFElement *)element {
     if (element.nibName) {
-        cell = (UITableViewCell *)[[[NSBundle mainBundle] loadNibNamed:element.nibName
-                                                                 owner:self
-                                                               options:nil] lastObject];
-        cell.selectionStyle = element.cellSelectionStyle;
+        [self.tableView registerNib:[UINib nibWithNibName:element.nibName
+                                                   bundle:[NSBundle mainBundle]]
+             forCellReuseIdentifier:element.tag];
     } else {
-        cell = [[element.cellClass alloc] initWithStyle:element.cellStyle
-                                        reuseIdentifier:element.tag];
-        cell.selectionStyle = element.cellSelectionStyle;
+        [self.tableView registerClass:[self ef__patchClassForElement:element]
+               forCellReuseIdentifier:element.tag];
+    }
+}
+
+- (void)ef_unregCellClassForElement:(EFElement *)element {
+    if (element.nibName) {
+        [self.tableView registerNib:nil forCellReuseIdentifier:element.tag];
+    } else {
+        [self.tableView registerClass:nil
+               forCellReuseIdentifier:element.tag];
+    }
+}
+
+- (Class)ef__patchClassForElement:(EFElement *)element {
+    NSAssert([element.cellClass isSubclassOfClass:[UITableViewCell class]],
+             @"Cell class should be a subclass of UITableViewCell");
+    if (element.cellClass == [UITableViewCell class]) {
+        Class patchClass = [UITableViewCell class];
+        switch (element.cellStyle) {
+            case UITableViewCellStyleSubtitle:
+                patchClass = [UITableViewCellSubtitle class];
+                break;
+            case UITableViewCellStyleValue1:
+                patchClass = [UITableViewCellValue1 class];
+                break;
+            case UITableViewCellStyleValue2:
+                patchClass = [UITableViewCellValue2 class];
+                break;
+            default:
+                break;
+        }
+        return patchClass;
     }
 
-    return cell;
+    return element.cellClass;
 }
 
 @end

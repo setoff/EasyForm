@@ -12,6 +12,8 @@
 #import <Expecta/Expecta.h>
 #import <UIKit/UIKit.h>
 #import "EFForm.h"
+#import "UITableViewCellSubtitle.h"
+
 
 #pragma mark - Elenent created from class
 
@@ -33,6 +35,7 @@ describe(@"Element", ^{
 
     NSIndexPath *const indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     beforeEach(^{
+        [tableView displayForm:testForm];
         testElement = [[EFElement alloc] initWithTag:kStdTag
                                               cellClass:[UITableViewCell class]
                                                 nibName:nil];
@@ -64,6 +67,7 @@ describe(@"Element", ^{
         testElement.cellHeight = 100;
         UITableViewCell *cell = [testForm tableView:tableView
                               cellForRowAtIndexPath:indexPath];
+        expect(cell).to.beInstanceOf([UITableViewCellSubtitle class]);
         expect(cell.selectionStyle).to.equal(UITableViewCellSelectionStyleGray);
         expect(cell.detailTextLabel).toNot.equal(nil);
         CGFloat height = [testForm tableView:tableView
@@ -99,6 +103,7 @@ describe(@"Element from NIB", ^{
         testForm = [EFForm new];
         tableView = [[UITableView alloc] initWithFrame:CGRectZero
                                                  style:UITableViewStylePlain];
+        [tableView displayForm:testForm];
     });
 
     NSString *const kNibName = @"TestCell";
