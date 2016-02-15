@@ -13,6 +13,7 @@
 #import <UIKit/UIKit.h>
 #import "EFForm.h"
 #import "UITableViewCellSubtitle.h"
+#import "UITableViewCellValue1.h"
 
 
 #pragma mark - Elenent created from class
@@ -210,6 +211,43 @@ describe(@"Sections", ^{
         expect(calledBlock).to.beTruthy();
     });
 });
+
+#pragma mark - Form cases
+
+describe(@"Form", ^{
+    __block EFForm *testForm;
+    __block UITableView *tableView;
+    beforeAll(^{
+        testForm = [EFForm new];
+        tableView = [[UITableView alloc] initWithFrame:CGRectZero
+                                                 style:UITableViewStylePlain];
+    });
+
+    it(@"cleans reuse all identifier before display", ^{
+
+        EFForm *form2 = [EFForm new];
+        EFElement *el2 = [[EFElement alloc] initWithTag:@"sameTag" nibName:@"TestCell"];
+        EFSection *sec2 = [[EFSection alloc] initWithTag:@"sec2" elements:@[el2]];
+        form2.sections = @[sec2];
+        [tableView displayForm:form2];
+
+        UITableViewCell *cell2 = [form2 tableView:tableView
+                            cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        expect(cell2).to.notTo.beInstanceOf([UITableViewCellValue1 class]);
+
+        EFElement *el1 = [[EFElement alloc] initWithTag:@"sameTag"];
+        el1.cellStyle = UITableViewCellStyleValue1;
+        EFSection *sec1 = [[EFSection alloc] initWithTag:@"sec1" elements:@[el1]];
+        testForm.sections = @[sec1];
+        [tableView displayForm:testForm];
+
+        UITableViewCell *cell1 = [testForm tableView:tableView
+                               cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        expect(cell1).to.beInstanceOf([UITableViewCellValue1 class]);
+    });
+
+});
+
 
 SpecEnd
 

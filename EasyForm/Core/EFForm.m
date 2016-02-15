@@ -20,6 +20,9 @@
 
 @implementation EFForm
 
+
+#pragma mark - Lifecycle
+
 - (instancetype)initWithTableView:(UITableView *)tableView
 {
     self = [super init];
@@ -30,6 +33,15 @@
     }
     return self;
 }
+
+
+- (void)dealloc {
+    for (EFSection *section in self.sections) {
+        [section removeObserver:self forKeyPath:@"hidden"];
+    }
+}
+
+#pragma mark - Managing tableview
 
 - (void)setTableView:(UITableView *)tableView {
     _tableView = tableView;
@@ -162,12 +174,9 @@
 }
 
 - (void)ef_unregCellClassForElement:(EFElement *)element {
-    if (element.nibName) {
-        [self.tableView registerNib:nil forCellReuseIdentifier:element.tag];
-    } else {
-        [self.tableView registerClass:nil
-               forCellReuseIdentifier:element.tag];
-    }
+    [self.tableView registerNib:nil forCellReuseIdentifier:element.tag];
+    [self.tableView registerClass:nil
+           forCellReuseIdentifier:element.tag];
 }
 
 - (Class)ef__patchClassForElement:(EFElement *)element {
