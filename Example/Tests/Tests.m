@@ -93,6 +93,13 @@ describe(@"Element", ^{
             testForm.sections = @[sameTagsSection];
         }).to.raiseAny();
     });
+
+    it(@"can be hidden", ^{
+        testElement.isVisible = ^{
+            return NO;
+        };
+        expect([testForm tableView:tableView numberOfRowsInSection:0]).to.equal(0);
+    });
 });
 
 #pragma mark - Elenent created from NIB
