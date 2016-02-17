@@ -24,18 +24,16 @@ SpecBegin(InitialSpecs)
 describe(@"Element", ^{
     __block EFForm *testForm;
     __block UITableView *tableView;
-    beforeAll(^{
-        testForm = [EFForm new];
-        tableView = [[UITableView alloc] initWithFrame:CGRectZero
-                                                 style:UITableViewStylePlain];
-    });
-
     __block EFSection *section;
     NSString *const kStdTag = @"stdTag1";
     __block EFElement *testElement;
 
     NSIndexPath *const indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     beforeEach(^{
+        testForm = [EFForm new];
+        tableView = [[UITableView alloc] initWithFrame:CGRectZero
+                                                 style:UITableViewStylePlain];
+
         [tableView displayForm:testForm];
         testElement = [[EFElement alloc] initWithTag:kStdTag
                                               cellClass:[UITableViewCell class]
@@ -43,6 +41,11 @@ describe(@"Element", ^{
 
         section = [[EFSection alloc] initWithTag:@"byClassName" elements:@[testElement]];
         testForm.sections = @[section];
+    });
+
+    afterEach(^{
+        testForm = nil;
+        tableView = nil;
     });
 
     it(@"builds cell", ^{
@@ -148,6 +151,7 @@ describe(@"Sections", ^{
         testForm = [EFForm new];
         tableView = [[UITableView alloc] initWithFrame:CGRectZero
                                                  style:UITableViewStylePlain];
+        [tableView displayForm:testForm];
     });
 
     NSString *const kTagOne = @"tagOne";

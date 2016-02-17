@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+FOUNDATION_EXTERN NSString *const EFSectionHiddenStateChangedNotification;
+
 @interface EFSection : NSObject
 
 /// Section tag. Should be unique for form
