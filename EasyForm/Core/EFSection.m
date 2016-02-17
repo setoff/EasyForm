@@ -9,6 +9,14 @@
 #import "EFSection.h"
 #import "EFElement.h"
 
+NSString *const EFSectionHiddenStateChangedNotification = @"EFSectionHiddenStateChangedNotification";
+
+@interface EFSection ()
+
+@property (nonatomic, strong) NSArray *allElements;
+
+@end
+
 @implementation EFSection
 
 - (instancetype)initWithTag:(NSString *)tag elements:(NSArray *)elements
@@ -16,9 +24,26 @@
     self = [super init];
     if (self) {
         _tag = tag;
-        _elements = elements;
+        self.allElements = elements;
     }
     return self;
+}
+
+- (void)setHidden:(BOOL)hidden {
+    _hidden = hidden;
+    [[NSNotificationCenter defaultCenter] postNotificationName:EFSectionHiddenStateChangedNotification
+                                                        object:self];
+}
+
+- (NSArray *)elements {
+    NSMutableArray *visibleElements = [NSMutableArray new];
+    for (EFElement *item in self.allElements) {
+        if (item.isVisible && !item.isVisible()) {
+            continue;
+        }
+        [visibleElements addObject:item];
+    }
+    return [visibleElements copy];
 }
 
 - (id)objectAtIndexedSubscript:(NSUInteger)idx {

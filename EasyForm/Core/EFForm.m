@@ -16,9 +16,14 @@
 /// Array of visible EFSections
 @property (nonatomic, strong) NSArray *actualSections;
 
+@property (nonatomic, strong) NSObject *sectionVisibilityObserver;
+
 @end
 
 @implementation EFForm
+
+
+#pragma mark - Lifecycle
 
 - (instancetype)initWithTableView:(UITableView *)tableView
 {
@@ -31,8 +36,17 @@
     return self;
 }
 
+#pragma mark - Managing tableview
+
 - (void)setTableView:(UITableView *)tableView {
     _tableView = tableView;
+    self.sectionVisibilityObserver = [[NSNotificationCenter defaultCenter]
+                                      addObserverForName:EFSectionHiddenStateChangedNotification
+                                      object:nil
+                                      queue:[NSOperationQueue mainQueue]
+                                      usingBlock:^(NSNotification * _Nonnull note) {
+                                          [self ef_sectionVisibleStateChanged:note];
+                                      }];
     [self enumerateSections:^(EFSection *section) {
         for (EFElement *item in section.elements) {
             [self ef_unregCellClassForElement:item];
@@ -46,12 +60,6 @@
 }
 
 - (void)setSections:(NSArray *)sections {
-    __weak typeof(self)weakSelf = self;
-    if ([_sections count]) {
-        [self enumerateSections:^(EFSection *section) {
-            [section removeObserver:weakSelf forKeyPath:@"hidden"];
-        }];
-    }
     _sections = sections;
 
     NSMutableArray *allTags = [NSMutableArray new];
@@ -65,11 +73,6 @@
                 [allTags addObject:item.tag];
             }
         }
-
-        [section addObserver:weakSelf
-                  forKeyPath:@"hidden"
-                     options:NSKeyValueObservingOptionNew
-                     context:NULL];
     }];
     self.actualSections = sections;
 }
@@ -88,15 +91,9 @@
 
 #pragma mark - Observe changes
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context
-{
-    if ([object isKindOfClass:[EFSection class]] && [keyPath isEqualToString:@"hidden"]) {
-        NSPredicate *filter = [NSPredicate predicateWithFormat:@"hidden == NO"];
-        self.actualSections = [self.sections filteredArrayUsingPredicate:filter];
-    }
+- (void)ef_sectionVisibleStateChanged:(NSNotification *)notification {
+    NSPredicate *filter = [NSPredicate predicateWithFormat:@"hidden == NO"];
+    self.actualSections = [self.sections filteredArrayUsingPredicate:filter];
 }
 
 #pragma mark - UITableView DataSource & Delegate
@@ -162,12 +159,9 @@
 }
 
 - (void)ef_unregCellClassForElement:(EFElement *)element {
-    if (element.nibName) {
-        [self.tableView registerNib:nil forCellReuseIdentifier:element.tag];
-    } else {
-        [self.tableView registerClass:nil
-               forCellReuseIdentifier:element.tag];
-    }
+    [self.tableView registerNib:nil forCellReuseIdentifier:element.tag];
+    [self.tableView registerClass:nil
+           forCellReuseIdentifier:element.tag];
 }
 
 - (Class)ef__patchClassForElement:(EFElement *)element {

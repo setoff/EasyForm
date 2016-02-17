@@ -39,6 +39,9 @@
 /// Called when user taps on cell (tableView:didSelectRow:atIndexPath:)
 @property (nonatomic, copy) void (^onTap)(UITableViewCell *cell, EFElement *element);
 
+/// Called to decide display cell or not. If `nil` cell displayed.
+@property (nonatomic, copy) BOOL (^isVisible)();
+
 /**
  Initializes form element.
  @param tag Element tag. This tag is also used as reuse identifier for representing cell.
