@@ -9,6 +9,7 @@
 #import "EFViewController.h"
 #import "EFExampleHelpers.h"
 #import "EFCellsDemoForm.h"
+#import <EasyForm/EFSwitchCell.h>
 #import <EasyForm/EFForm.h>
 
 @interface EFViewController ()
@@ -16,6 +17,8 @@
 @property (nonatomic, strong) EFForm *exampleForm;
 
 @property (nonatomic, strong) EFCellsDemoForm *cellsForm;
+
+@property (nonatomic, assign) BOOL optionVisible;
 
 @end
 
@@ -78,8 +81,31 @@
         stdCells.hidden = !stdCells.hidden;
     };
 
+    self.optionVisible = YES;
+    EFElement *thisRowIsOptional = [[EFElement alloc] initWithTag:@"optionalRow"];
+    thisRowIsOptional.setupCell = ^(UITableViewCell *cell) {
+        cell.textLabel.text = @"This row is optional. Its visibility depends on value of `optionVisible` flag.";
+        cell.textLabel.numberOfLines = 0;
+    };
+
+    thisRowIsOptional.isVisible = ^{
+        return self.optionVisible;
+    };
+
+    EFElement *hideRowBtn = [[EFElement alloc] initWithTag:@"hideFormTag"
+                                                 cellClass:[EFSwitchCell class]];
+    hideRowBtn.setupCell = ^(UITableViewCell *cell) {
+        ((EFSwitchCell *)cell).titleLabel.text = @"option is visible";
+        ((EFSwitchCell *)cell).switchToggle.on = self.optionVisible;
+        ((EFSwitchCell *)cell).switchToggle.onTintColor = [EFExampleHelpers greenColor];
+        ((EFSwitchCell *)cell).onToggle = ^(BOOL isOn) {
+            self.optionVisible = isOn;
+            [self.tableView reloadData];
+        };
+    };
+
     EFSection *changeForm = [[EFSection alloc] initWithTag:@"changeSection"
-                                                  elements:@[hideButton, change]];
+                                                  elements:@[hideButton, change, thisRowIsOptional, hideRowBtn]];
     changeForm.title = @"Change form on fly";
     changeForm.setupTitle = ^{
         return stdCells.isHidden ? @"This is the same form with hidden section" : (NSString *)nil;
