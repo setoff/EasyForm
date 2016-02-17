@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "EasyForm"
-  s.version          = "0.1.1"
+  s.version          = "0.1.2"
   s.summary          = "UITableView-based declarative form constructor."
   s.description      = <<-DESC
                         `UITableView`-based wrapper for easily creating forms in declarative style.

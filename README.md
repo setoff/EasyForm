@@ -9,12 +9,27 @@ This is `UITableViewDataSource/UITableViewDelegate` form constructor solution. I
 
 Form configuration and logic can be implemented in declarative way. Can be placed in separate module and reused in different view controllers.
 
+## Try
+
+You have two options to try lib:
+```sh
+$ git clone git@github.com:setoff/EasyForm.git
+$ cd EasyForm/Example
+$ pod install
+$ open EasyForm.xcworkspace
+```
+or
+
+```sh
+$ pod try EasyForm
+```
+After workspace has been opened select `EasyForm-Example` target and run app.
+
 ## Usage
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+`EFForm` implements `UITableViewDelegate` and `UITableViewDataSource` protocols. So you can easily use form with any instance of `UITableView`. But it is recommended to use with `UITableViewController` (or subclasses) because of several ‘free’ features like scrolling to focused text field which placed in `UITableViewCell`.
 
-`EFForm` class implements `UITableViewDelegate` and `UITableViewDataSource` protocols. So you can easily use form with any instance of `UITableView`. But it is recommended to use with `UITableViewController` (or subclasses) because of several ‘free’ features like scrolling to focused text field which placed in `UITableViewCell`.
-
+Form implementation structure looks like this:
 ```Objective-C
 self.form = [EFForm new];
 
