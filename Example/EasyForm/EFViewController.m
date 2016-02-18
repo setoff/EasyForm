@@ -11,6 +11,7 @@
 #import "EFCellsDemoForm.h"
 #import <EasyForm/EFSwitchCell.h>
 #import <EasyForm/EFForm.h>
+#import "AutolayoutCell.h"
 
 @interface EFViewController ()
 
@@ -82,10 +83,13 @@
     };
 
     self.optionVisible = YES;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
     EFElement *thisRowIsOptional = [[EFElement alloc] initWithTag:@"optionalRow"];
+    thisRowIsOptional.cellHeight = UITableViewAutomaticDimension;
     thisRowIsOptional.setupCell = ^(UITableViewCell *cell) {
         cell.textLabel.text = @"This row is optional. Its visibility depends on value of `optionVisible` flag.";
         cell.textLabel.numberOfLines = 0;
+        cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
     };
 
     thisRowIsOptional.isVisible = ^{
@@ -95,7 +99,8 @@
     EFElement *hideRowBtn = [[EFElement alloc] initWithTag:@"hideFormTag"
                                                  cellClass:[EFSwitchCell class]];
     hideRowBtn.setupCell = ^(UITableViewCell *cell) {
-        ((EFSwitchCell *)cell).titleLabel.text = @"option is visible";
+        ((EFSwitchCell *)cell).titleLabel.text = [NSString stringWithFormat:@"Row below is %@",
+                                                  self.optionVisible ? @"visible" : @"hidden"];
         ((EFSwitchCell *)cell).switchToggle.on = self.optionVisible;
         ((EFSwitchCell *)cell).switchToggle.onTintColor = [EFExampleHelpers greenColor];
         ((EFSwitchCell *)cell).onToggle = ^(BOOL isOn) {
@@ -105,15 +110,33 @@
     };
 
     EFSection *changeForm = [[EFSection alloc] initWithTag:@"changeSection"
-                                                  elements:@[hideButton, change, thisRowIsOptional, hideRowBtn]];
+                                                  elements:@[hideButton, change, hideRowBtn, thisRowIsOptional]];
     changeForm.title = @"Change form on fly";
     changeForm.setupTitle = ^{
         return stdCells.isHidden ? @"This is the same form with hidden section" : (NSString *)nil;
     };
 
-    self.exampleForm = [EFForm new];
-    self.exampleForm.sections = @[stdCells, changeForm];
+    EFElement *autolayoutCell = [[EFElement alloc] initWithTag:@"autolCell"
+                                                       nibName:@"AutolayoutCell"];
+    autolayoutCell.cellHeight = UITableViewAutomaticDimension;
+    autolayoutCell.setupCell = ^(UITableViewCell *cell) {
+        AutolayoutCell *autoCell = (AutolayoutCell *)cell;
 
+        autoCell.value.text = [[NSUUID UUID] UUIDString];
+        autoCell.comment.text = @"Demo of a self-sizing cell which created from nib.";
+        NSArray *list = @[@1, @234, @234, @"item #2", @234];
+        autoCell.itemsList.text = [list description];
+    };
+
+    EFSection *autolSection = [[EFSection alloc] initWithTag:@"autolSection"
+                                                    elements:@[autolayoutCell]];
+
+    self.exampleForm = [EFForm new];
+    self.exampleForm.sections = @[stdCells, changeForm, autolSection];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     [self.tableView displayForm:self.exampleForm];
 }
 

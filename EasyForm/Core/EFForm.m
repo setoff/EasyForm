@@ -115,13 +115,9 @@
         cell = [tableView dequeueReusableCellWithIdentifier:element.tag];
         cell.selectionStyle = element.cellSelectionStyle;
     }
+    element.setupCell(cell);
 
     return cell;
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    EFElement *element = self.actualSections[indexPath.section][indexPath.row];
-    element.setupCell(cell);
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -141,6 +137,11 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    EFElement *element = self.actualSections[indexPath.section][indexPath.row];
+    return element.cellHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     EFElement *element = self.actualSections[indexPath.section][indexPath.row];
     return element.cellHeight;
 }

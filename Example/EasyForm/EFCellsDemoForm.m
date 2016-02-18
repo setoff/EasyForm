@@ -48,12 +48,18 @@
 
     EFElement *switchElement = [[EFElement alloc] initWithTag:@"switch"
                                                     cellClass:[EFSwitchCell class]];
+    switchElement.cellHeight = UITableViewAutomaticDimension;
     switchElement.setupCell = ^(UITableViewCell *cell) {
-        ((EFSwitchCell *)cell).titleLabel.text = @"Cell with switch";
+        ((EFSwitchCell *)cell).titleLabel.numberOfLines = 0;
+        if (((EFSwitchCell *)cell).switchToggle.isOn) {
+            ((EFSwitchCell *)cell).titleLabel.text = @"As you can see this cell builded using autolayout. One notice: you should set cellHeight property of an EFElement with `UITableViewAutomaticDimension` to self-sizing cell feature works. Now switch me off.";
+        } else {
+            ((EFSwitchCell *)cell).titleLabel.text = @"Switch me on";
+        }
+
         ((EFSwitchCell *)cell).switchToggle.onTintColor = [EFExampleHelpers greenColor];
         ((EFSwitchCell *)cell).onToggle = ^(BOOL isOn) {
-            [self.presentingController alertAction:[NSString stringWithFormat:@"Toggle is %@",
-                                                    isOn ? @"ON" : @"OFF"]];
+            [self.tableView reloadData];
         };
     };
 

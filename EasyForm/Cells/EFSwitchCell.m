@@ -50,6 +50,8 @@
                                  multiplier:1.0 constant:0.0]];
     [self.switchToggle setContentHuggingPriority:UILayoutPriorityDefaultHigh
                                          forAxis:UILayoutConstraintAxisHorizontal];
+    [self.switchToggle setContentCompressionResistancePriority:UILayoutPriorityRequired
+                                                       forAxis:UILayoutConstraintAxisHorizontal];
 }
 
 - (void)addActions {

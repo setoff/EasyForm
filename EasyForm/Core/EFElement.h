@@ -30,7 +30,11 @@
 /// Cell selection style. UITableViewCellSelectionStyleDefault by default.
 @property (nonatomic, assign) UITableViewCellSelectionStyle cellSelectionStyle;
 
-/// Statndart cell height for this element if it differs from 44. By default 44.
+/**
+ Standart cell height for this element if it differs from 44. By default 44.
+    You may specify UITableViewCellAutomaticDimension to use self-sizing cell feature.
+    Cell content should use autolayout for positioning subviews.
+ */
 @property (nonatomic, assign) CGFloat cellHeight;
 
 /// Called just before displaying Element's cell (tableView:willDisplayCell:...)
