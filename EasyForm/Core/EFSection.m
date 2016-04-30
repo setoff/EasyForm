@@ -8,6 +8,7 @@
 
 #import "EFSection.h"
 #import "EFElement.h"
+#import "EFDataSource.h"
 
 NSString *const EFSectionHiddenStateChangedNotification = @"EFSectionHiddenStateChangedNotification";
 
@@ -15,7 +16,12 @@ NSString *const EFSectionHiddenStateChangedNotification = @"EFSectionHiddenState
 
 @property (nonatomic, strong) NSArray *allElements;
 
+@property (nonatomic, readonly) BOOL isDynamic;
+@property (nonatomic, readonly) NSObject<EFDataSource> *dataSource;
+@property (nonatomic, readonly) EFElement *dynamicElement;
+
 @end
+
 
 @implementation EFSection
 
@@ -36,6 +42,20 @@ NSString *const EFSectionHiddenStateChangedNotification = @"EFSectionHiddenState
 }
 
 - (NSArray *)elements {
+    return self.isDynamic ? @[self.dynamicElement] : [self staticElements];
+}
+
+- (NSInteger)rowsCount {
+    return self.isDynamic ? [self.dataSource count] : [self staticElements].count;
+}
+
+- (id)objectAtIndexedSubscript:(NSUInteger)idx {
+    return self.isDynamic ? self.dynamicElement : self.elements[idx];
+}
+
+#pragma mark - Static section
+
+- (NSArray *)staticElements {
     NSMutableArray *visibleElements = [NSMutableArray new];
     for (EFElement *item in self.allElements) {
         if (item.isVisible && !item.isVisible()) {
@@ -46,8 +66,25 @@ NSString *const EFSectionHiddenStateChangedNotification = @"EFSectionHiddenState
     return [visibleElements copy];
 }
 
-- (id)objectAtIndexedSubscript:(NSUInteger)idx {
-    return self.elements[idx];
+
+#pragma mark - Dynamic section
+
+- (instancetype)initWithTag:(NSString *)tag
+                    element:(EFElement *)dynamicElement
+                 dataSource:(NSObject<EFDataSource> *)dataSource
+{
+    self = [super init];
+    if (self) {
+        _tag = tag;
+        _isDynamic = YES;
+        _dynamicElement = dynamicElement;
+        _dataSource = dataSource;
+    }
+    return self;
+}
+
+- (EFCellModel *)infoAtIndex:(NSInteger)index {
+    return self.dataSource[index];
 }
 
 @end

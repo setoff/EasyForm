@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class EFCellModel;
+
 /**
  Form element. Each element should have representing cell. You can specify your custom cell or use `UITableViewCell`.
  All element's behaviour and appearance can be configured with two blocks: `setupCell` and `onTap`.
@@ -55,8 +57,6 @@
  */
 - (instancetype)initWithTag:(NSString *)tag cellClass:(Class)cellClass nibName:(NSString *)nibName;
 
-//TODO: make several initializers: only with tag, tag and class, tag and nibName (extract class name from nib metadata).
-
 /**
  Creates element with `UITableViewCell` representing cell. You can tune it within `setupCell` block.
  @param tag Element's tag and cell's `reuseIdentifier`.
@@ -77,5 +77,49 @@
  @param cellClass Representing cell class.
  */
 - (instancetype)initWithTag:(NSString *)tag cellClass:(Class)cellClass;
+
+#pragma mark - Dynamic cell
+
+/// Is element created to use with dynamic sections.
+@property (nonatomic, readonly) BOOL isDynamic;
+
+/**
+ Setup dynamic cells content block.
+ @param cell Displaying cell.
+ @param info Cell model must contain neccessary info.
+ */
+@property (nonatomic, copy) void (^setupDynamicCell)(UITableViewCell *cell, EFCellModel *info);
+
+/**
+ Initializes dynamic section element.
+ @param tag Element tag and cell's reuse identifier.
+ @param cellClass Representing cell class.
+ @param nibName IB nib file name with custom cell view.
+ */
+- (instancetype)initDynamicWithTag:(NSString *)tag
+                         cellClass:(Class)cellClass
+                           nibName:(NSString *)nibName;
+
+/**
+ Creates element for dymanic sections. It uses `UITableViewCell` as represening cell.
+    You may tune it with `setupCell` block.
+ @param tag Element's tag and cell's reuseIdentifier.
+ */
+- (instancetype)initDynamicWithTag:(NSString *)tag;
+
+/**
+ Creates element for dynamic section with a given nib file.
+ @discussion When form rendered class name for given cell will extracted from nibFile metadata.
+ @param tag Element's tag and cell's reuseIdentifier.
+ @param nibName IB nib file name with custom cell view.
+ */
+- (instancetype)initDynamicWithTag:(NSString *)tag nibName:(NSString *)nibName;
+
+/**
+ Creates element for dynamic section with given cell class.
+ @param tag Element's tag and cell's reuseIdentifier.
+ @param cellClass Representing cell class.
+ */
+- (instancetype)initDynamicWithTag:(NSString *)tag cellClass:(Class)cellClass;
 
 @end

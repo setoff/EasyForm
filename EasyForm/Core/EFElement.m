@@ -14,13 +14,17 @@
 {
     self = [super init];
     if (self) {
-        _tag = tag;
-        _cellClass = cellClass;
-        _nibName = nibName;
-        _cellStyle = UITableViewCellStyleDefault;
-        _cellHeight = 44.0;
+        [self ef__elementConstruct:tag cellClass:cellClass nibName:nibName];
     }
     return self;
+}
+
+- (void)ef__elementConstruct:(NSString *)tag cellClass:(Class)cellClass nibName:(NSString *)nibName {
+    _tag = tag;
+    _cellClass = cellClass;
+    _nibName = nibName;
+    _cellStyle = UITableViewCellStyleDefault;
+    _cellHeight = 44.0;
 }
 
 - (instancetype)initWithTag:(NSString *)tag {
@@ -41,6 +45,32 @@
     }
 
     return [self.tag isEqualToString:((EFElement *)object).tag];
+}
+
+#pragma mark - Dynamic element
+
+- (instancetype)initDynamicWithTag:(NSString *)tag
+                         cellClass:(Class)cellClass
+                           nibName:(NSString *)nibName
+{
+    self = [super init];
+    if (self) {
+        _isDynamic = YES;
+        [self ef__elementConstruct:tag cellClass:cellClass nibName:nibName];
+    }
+    return self;
+}
+
+- (instancetype)initDynamicWithTag:(NSString *)tag {
+    return [self initDynamicWithTag:tag cellClass:[UITableViewCell class] nibName:nil];
+}
+
+- (instancetype)initDynamicWithTag:(NSString *)tag nibName:(NSString *)nibName {
+    return [self initDynamicWithTag:tag cellClass:nil nibName:nibName];
+}
+
+- (instancetype)initDynamicWithTag:(NSString *)tag cellClass:(Class)cellClass {
+    return [self initDynamicWithTag:tag cellClass:cellClass nibName:nil];
 }
 
 @end

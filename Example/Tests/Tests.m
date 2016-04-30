@@ -12,6 +12,8 @@
 #import <Expecta/Expecta.h>
 #import <UIKit/UIKit.h>
 #import "EFForm.h"
+#import "EFCellModel.h"
+#import "EFArrayDataSource.h"
 #import "UITableViewCellSubtitle.h"
 #import "UITableViewCellValue1.h"
 
@@ -221,6 +223,11 @@ describe(@"Sections", ^{
         expect(buildedTitle).to.equal(expectedTitle);
         expect(calledBlock).to.beTruthy();
     });
+
+    it(@"able to create custom section view", ^{
+//        BOOL implemented = NO;
+//        expect(implemented).to.equal(YES);
+    });
 });
 
 #pragma mark - Form cases
@@ -259,6 +266,81 @@ describe(@"Form", ^{
 
 });
 
+
+#pragma mark - Dynamic sections
+
+describe(@"Dynamic section", ^{
+    __block EFForm *testForm;
+    __block UITableView *tableView;
+    __block EFArrayDataSource *dataSource;
+    beforeAll(^{
+        testForm = [EFForm new];
+        tableView = [[UITableView alloc] initWithFrame:CGRectZero
+                                                 style:UITableViewStylePlain];
+        dataSource = [EFArrayDataSource dataSourceWithArray:
+               @[
+                 [EFCellModel modelWithTitle:@"test row 1" value:@"val 1"],
+                 [EFCellModel modelWithTitle:@"test row 2" value:@"val 2"]]];
+    });
+
+    EFElement *dynamicElement = [[EFElement alloc] initDynamicWithTag:@"reusableCell"];
+    dynamicElement.setupDynamicCell = ^(UITableViewCell *cell, EFCellModel *info) {
+        cell.textLabel.text = info.title;
+        cell.detailTextLabel.text = info.value;
+    };
+    EFSection *section = [[EFSection alloc] initWithTag:@"dynamicSection"
+                                                element:dynamicElement
+                                             dataSource:dataSource];
+    beforeEach(^{
+        testForm.sections = @[section];
+        [tableView displayForm:testForm];
+    });
+
+    it(@"allows to create dynamic number of cell with the same type", ^{
+        expect([testForm tableView:tableView numberOfRowsInSection:0]).to.equal(2);
+
+        UITableViewCell *cell1 = [testForm tableView:tableView
+                              cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        expect(cell1.textLabel.text).to.equal(@"test row 1");
+        expect(cell1.detailTextLabel.text).to.equal(@"val 1");
+
+        UITableViewCell *cell2 = [testForm tableView:tableView
+                               cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+        expect(cell2.textLabel.text).to.equal(@"test row 2");
+        expect(cell2.detailTextLabel.text).to.equal(@"val 2");
+    });
+
+    it(@"immediately react on adding data to source", ^{
+        [dataSource add:[EFCellModel modelWithTitle:@"test row 3" value:@"val 3"]];
+
+        expect([testForm tableView:tableView numberOfRowsInSection:0]).to.equal(3);
+        UITableViewCell *cell3 = [testForm tableView:tableView
+                               cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
+        expect(cell3.textLabel.text).to.equal(@"test row 3");
+        expect(cell3.detailTextLabel.text).to.equal(@"val 3");
+    });
+
+    it(@"immediately react on removing data", ^{
+        [dataSource removeAtIndex:1];
+
+        expect([testForm tableView:tableView numberOfRowsInSection:0]).to.equal(1);
+        UITableViewCell *cell1 = [testForm tableView:tableView
+                               cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        expect(cell1.textLabel.text).to.equal(@"test row 1");
+        expect(cell1.detailTextLabel.text).to.equal(@"val 1");
+    });
+
+    it(@"immediately react on change data", ^{
+        [dataSource updateAtIndex:0
+                            model:[EFCellModel modelWithTitle:@"updated 1" value:@"updated val1"]];
+        expect([testForm tableView:tableView numberOfRowsInSection:0]).to.equal(2);
+        UITableViewCell *cell1 = [testForm tableView:tableView
+                               cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        expect(cell1.textLabel.text).to.equal(@"updated 1");
+        expect(cell1.detailTextLabel.text).to.equal(@"updated val1");
+    });
+
+});
 
 SpecEnd
 
