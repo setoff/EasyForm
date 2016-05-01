@@ -8,14 +8,13 @@
 
 Pod::Spec.new do |s|
   s.name             = "EasyForm"
-  s.version          = "0.1.3"
+  s.version          = "0.1.4"
   s.summary          = "UITableView-based declarative form constructor."
   s.description      = <<-DESC
                         `UITableView`-based wrapper for easily creating forms in declarative style.
                        DESC
 
   s.homepage         = "https://github.com/setoff/EasyForm"
-  # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "Ilya Sedov" => "i.setoff@gmail.com" }
   s.source           = { :git => "https://github.com/setoff/EasyForm.git", :tag => s.version.to_s }

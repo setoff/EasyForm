@@ -8,7 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+@class EFElement;
+@class EFCellModel;
+@protocol EFDataSource;
+
 FOUNDATION_EXTERN NSString *const EFSectionHiddenStateChangedNotification;
+
 
 @interface EFSection : NSObject
 
@@ -18,8 +23,11 @@ FOUNDATION_EXTERN NSString *const EFSectionHiddenStateChangedNotification;
 /// Determines whether the section is hidden.
 @property (nonatomic, assign, getter=isHidden) BOOL hidden;
 
-/// Sections rows elements
-@property (nonatomic, readonly) NSArray *elements;
+/// Sections rows elements. You mustn't relate on `count` of this array to estimate rows number. Use `rowsCount` intead.
+@property (nonatomic, readonly) NSArray<EFElement *> *elements;
+
+// Number of rows in section
+@property (nonatomic, readonly) NSInteger rowsCount;
 
 /// Section static title. If you need dynamic title use `setupTitle` block.
 @property (nonatomic, copy) NSString *title;
@@ -38,5 +46,19 @@ FOUNDATION_EXTERN NSString *const EFSectionHiddenStateChangedNotification;
  Accesses section's row elements by [n]
  */
 - (id)objectAtIndexedSubscript:(NSUInteger)idx;
+
+#pragma mark - Dynamic section
+
+/**
+ Creates a dynamic section.
+ @param tag Section tag.
+ @param element Dynamic element which used to config and display cells.
+ @param dataSource 
+ */
+- (instancetype)initWithTag:(NSString *)tag
+                    element:(EFElement *)dynamicElement
+                 dataSource:(NSObject<EFDataSource> *)dataSource;
+
+- (EFCellModel *)infoAtIndex:(NSInteger)index;
 
 @end

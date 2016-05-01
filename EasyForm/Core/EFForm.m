@@ -104,7 +104,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     EFSection *formSection = self.actualSections[section];
-    return [formSection.elements count];
+    return [formSection rowsCount];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -115,7 +115,12 @@
         cell = [tableView dequeueReusableCellWithIdentifier:element.tag];
         cell.selectionStyle = element.cellSelectionStyle;
     }
-    element.setupCell(cell);
+    if (element.isDynamic) {
+        EFSection *dynamicSection = self.actualSections[indexPath.section];
+        element.setupDynamicCell(cell, [dynamicSection infoAtIndex:indexPath.row]);
+    } else {
+        element.setupCell(cell);
+    }
 
     return cell;
 }

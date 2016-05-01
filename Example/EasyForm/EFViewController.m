@@ -11,6 +11,8 @@
 #import "EFCellsDemoForm.h"
 #import <EasyForm/EFSwitchCell.h>
 #import <EasyForm/EFForm.h>
+#import <EasyForm/EFArrayDataSource.h>
+#import <EasyForm/EFCellModel.h>
 #import "AutolayoutCell.h"
 
 @interface EFViewController ()
@@ -131,8 +133,33 @@
     EFSection *autolSection = [[EFSection alloc] initWithTag:@"autolSection"
                                                     elements:@[autolayoutCell]];
 
+
+    EFElement *dynamicElement = [[EFElement alloc] initDynamicWithTag:@"dynamicCell"];
+    dynamicElement.cellStyle = UITableViewCellStyleSubtitle;
+    dynamicElement.setupDynamicCell = ^(UITableViewCell *cell, EFCellModel *model) {
+        cell.textLabel.text = model.title;
+        cell.detailTextLabel.text = model.value;
+    };
+    EFArrayDataSource *src = [EFArrayDataSource dataSourceWithArray:
+                              @[[EFCellModel modelWithTitle:@"Event #1"
+                                                      value:[[NSDate new] description]]
+                                ]];
+
+    dynamicElement.onTap = ^(UITableViewCell *cell, EFElement *item) {
+        NSString *eventTitle = [NSString stringWithFormat:@"Event #%@", @([src count] + 1)];
+        [src add:[EFCellModel modelWithTitle:eventTitle
+                                       value:[[NSDate new] description]]];
+        [self.tableView reloadData];
+    };
+
+    EFSection *dynSection = [[EFSection alloc] initWithTag:@"dynSection"
+                                                   element:dynamicElement
+                                                dataSource:src];
+    dynSection.title = @"Tap on cell to add more rows";
+
+
     self.exampleForm = [EFForm new];
-    self.exampleForm.sections = @[stdCells, changeForm, autolSection];
+    self.exampleForm.sections = @[stdCells, changeForm, autolSection, dynSection];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
