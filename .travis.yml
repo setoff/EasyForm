@@ -8,11 +8,8 @@ xcode_project: Example/EasyForm.xcworkspace
 xcode-scheme: EasyForm-Example 
 podfile: Example/Podfile
 before_install:
-#- rvm use system
-#- sudo gem install cocoapods --no-rdoc --no-ri --no-document --quiet
-#- sudo gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 - pod install --project-directory=Example
 script:
-- set -o pipefail && xcodebuild test -workspace Example/EasyForm.xcworkspace -scheme EasyForm-Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
+- set -o pipefail && xcodebuild test -workspace Example/EasyForm.xcworkspace -scheme EasyForm-Example -sdk iphonesimulator10.2 -destination "OS=10.2,name=iPhone 7" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES | xcpretty
 - pod lib lint
 
