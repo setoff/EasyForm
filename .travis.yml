@@ -4,6 +4,8 @@
 
 language: objective-c
 osx_image: xcode8.2
+xcode_project: Example/EasyForm.xcworkspace
+xcode-scheme: EasyForm-Example 
 podfile: Example/Podfile
 before_install:
 #- rvm use system
