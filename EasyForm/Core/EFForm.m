@@ -118,7 +118,7 @@
     if (element.isDynamic) {
         EFSection *dynamicSection = self.actualSections[indexPath.section];
         element.setupDynamicCell(cell, [dynamicSection infoAtIndex:indexPath.row]);
-    } else {
+    } else if (element.setupCell != nil) {
         element.setupCell(cell);
     }
 
