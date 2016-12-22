@@ -63,7 +63,6 @@ describe(@"Element", ^{
         };
         UITableViewCell *cell = [testForm tableView:tableView
                               cellForRowAtIndexPath:indexPath];
-        [testForm tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
         expect(cell.textLabel.text).to.equal(checkWord);
     });
 
@@ -273,25 +272,32 @@ describe(@"Dynamic section", ^{
     __block EFForm *testForm;
     __block UITableView *tableView;
     __block EFArrayDataSource *dataSource;
+    __block EFSection *section;
     beforeAll(^{
         testForm = [EFForm new];
         tableView = [[UITableView alloc] initWithFrame:CGRectZero
                                                  style:UITableViewStylePlain];
-        dataSource = [EFArrayDataSource dataSourceWithArray:
-               @[
-                 [EFCellModel modelWithTitle:@"test row 1" value:@"val 1"],
-                 [EFCellModel modelWithTitle:@"test row 2" value:@"val 2"]]];
     });
 
-    EFElement *dynamicElement = [[EFElement alloc] initDynamicWithTag:@"reusableCell"];
-    dynamicElement.setupDynamicCell = ^(UITableViewCell *cell, EFCellModel *info) {
-        cell.textLabel.text = info.title;
-        cell.detailTextLabel.text = info.value;
-    };
-    EFSection *section = [[EFSection alloc] initWithTag:@"dynamicSection"
-                                                element:dynamicElement
-                                             dataSource:dataSource];
+
+
     beforeEach(^{
+        EFElement *dynamicElement = [[EFElement alloc] initDynamicWithTag:@"reusableCell"
+                                                                cellClass:[UITableViewCellValue1 class]];
+        dynamicElement.setupDynamicCell = ^(UITableViewCell *cell, EFCellModel *info) {
+            cell.textLabel.text = info.title;
+            cell.detailTextLabel.text = info.value;
+        };
+
+        dataSource = [EFArrayDataSource dataSourceWithArray:
+                      @[
+                        [EFCellModel modelWithTitle:@"test row 1" value:@"val 1"],
+                        [EFCellModel modelWithTitle:@"test row 2" value:@"val 2"]]];
+
+        section = [[EFSection alloc] initWithTag:@"dynamicSection"
+                                           element:dynamicElement
+                                        dataSource:dataSource];
+
         testForm.sections = @[section];
         [tableView displayForm:testForm];
     });
