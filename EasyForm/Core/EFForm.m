@@ -128,7 +128,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     EFElement *element = self.actualSections[indexPath.section][indexPath.row];
     if (element.onTap) {
-        element.onTap([tableView dequeueReusableCellWithIdentifier:element.tag], element);
+        element.onTap([tableView cellForRowAtIndexPath:indexPath], element);
     }
 }
 

@@ -89,6 +89,16 @@ describe(@"Element", ^{
         expect(callCheck).to.beTruthy();
     });
 
+    it(@"passes actual cell when selected", ^{
+        UITableViewCell *expectedCell = [tableView cellForRowAtIndexPath:indexPath];
+        __block UITableViewCell *actualCell;
+        testElement.onTap = ^(UITableViewCell *cell, EFElement *item) {
+            actualCell = cell;
+        };
+        [testForm tableView:tableView didSelectRowAtIndexPath:indexPath];
+        expect(actualCell).to.equal(expectedCell);
+    });
+
     it(@"throws on duplicate tags", ^{
         expect(^{
             EFElement *sameTag = [[EFElement alloc] initWithTag:kStdTag];
@@ -156,9 +166,11 @@ describe(@"Sections", ^{
     });
 
     NSString *const kTagOne = @"tagOne";
-    EFSection *sectionOne = [[EFSection alloc] initWithTag:kTagOne elements:@[]];
-    EFSection *sectionTwo = [[EFSection alloc] initWithTag:@"tagTwo" elements:@[]];
+    __block EFSection *sectionOne;
+    __block EFSection *sectionTwo;
     beforeEach(^{
+        sectionOne = [[EFSection alloc] initWithTag:kTagOne elements:@[]];
+        sectionTwo = [[EFSection alloc] initWithTag:@"tagTwo" elements:@[]];
         testForm.sections = @[sectionOne, sectionTwo];
     });
 
